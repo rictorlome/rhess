@@ -2,16 +2,30 @@ require_relative 'board'
 require_relative 'piece'
 require_relative 'cursor'
 require_relative 'display'
+require_relative 'human_player'
 require 'byebug'
 
 
 class Game
   attr_reader :board, :display
+  attr_accessor :turn
 
   def initialize
     @board = Board.new
     board.set_board
     @display = Display.new(@board)
+    @player1 = HumanPlayer.new('Sam', self, :white)
+    @player2 = HumanPlayer.new('Bob', self, :black)
+    @turn = :white
+  end
+
+  def render
+    system('clear')
+    display.render
+    self.check_status
+    self.checkmate_status
+    puts "The move buffer: #{display.cursor.move_buffer}"
+    puts "#{self.turn} to move."
   end
 
   def check_status
@@ -37,27 +51,24 @@ class Game
     puts board.checkmate?(:black)
   end
 
+  def game_over?
+    board.checkmate?(:white) || board.checkmate?(:black)
+  end
+
+  def winner
+    board.checkmate?(:white) ? "Black wins!" : "White wins!"
+  end
+
   def play
     system("clear")
-    100.times do
-      display.render
-      self.check_status
-      self.checkmate_status
-      puts "The move buffer: #{display.cursor.move_buffer}"
-      display.cursor.get_input
-      if display.cursor.move_buffer.length == 2
-        start, dest = display.cursor.move_buffer[0], display.cursor.move_buffer[1]
-        piece = board[start]
-        if piece.moves.include?(dest)
-          board.move_piece(start,dest)
-        else
-          puts "You can't move there!"
-          sleep(0.7)
-        end
-        display.cursor.move_buffer = []
-      end
-      system("clear")
+    until game_over?
+      @player1.make_move
+      @player2.make_move
     end
+    system('clear')
+    display.render
+    puts "Checkmate!"
+    puts winner
   end
 end
 

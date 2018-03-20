@@ -49,12 +49,28 @@ class Board
 
   def move_piece(start_pos, end_pos)
     piece = self[start_pos]
+    self[start_pos], self[end_pos] = NullPiece.instance, piece
+    piece.pos = end_pos
+  end
+
+  def is_valid_move?(start_pos, end_pos)
+    piece = self[start_pos]
     if !self.is_on_board?(start_pos) || piece.class == NullPiece
       puts "You cannot move a nil piece!"
       sleep(0.7)
+      return false
     end
-    self[start_pos], self[end_pos] = NullPiece.instance, piece
-    piece.pos = end_pos
+    if piece.move_into_check?(end_pos)
+      puts "You cannot move into check!"
+      sleep(0.7)
+      return false
+    end
+    unless piece.moves.include?(end_pos)
+      puts "You cannot move there!"
+      sleep(0.7)
+      return false
+    end
+    true
   end
 
   def find_kings

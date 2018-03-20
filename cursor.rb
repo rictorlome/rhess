@@ -84,7 +84,7 @@ class Cursor
     elsif key == :space
       move_buffer << @cursor_pos
     elsif key == :ctrl_c
-      exit  
+      exit
     end
   end
 
