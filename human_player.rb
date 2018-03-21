@@ -36,6 +36,7 @@ class HumanPlayer
         start, dest = display.cursor.move_buffer[0], display.cursor.move_buffer[1]
         if board.is_valid_move?(start,dest)
            board.move_piece(start,dest)
+           board[dest].has_moved = true
            display.cursor.move_buffer = []
            self.color == :white ? game.turn = :black : game.turn = :white
         else

@@ -49,8 +49,64 @@ class Board
 
   def move_piece(start_pos, end_pos)
     piece = self[start_pos]
+    wrap_rook(start_pos,end_pos) if castling?(start_pos,end_pos)
+    if promoting?(start_pos,end_pos)
+      choose_piece(start_pos)
+      piece = self[start_pos]
+    end
     self[start_pos], self[end_pos] = NullPiece.instance, piece
     piece.pos = end_pos
+
+  end
+
+  def wrap_rook(start_pos,end_pos)
+    piece = self[start_pos]
+    if piece.class == King && (end_pos[1] - start_pos[1]) == 2
+      x, y = start_pos
+      move_piece([x,y+3],[x,y+1])
+    elsif piece.class == King && (end_pos[1] - start_pos[1]) == -2
+      x, y = start_pos
+      move_piece([x,y-4],[x,y-1])
+    end
+  end
+
+  def castling?(start_pos,end_pos)
+    piece = self[start_pos]
+    piece.class == King && (end_pos[1] - start_pos[1]).abs != 1
+  end
+
+  def promoting?(start_pos,end_pos)
+    piece = self[start_pos]
+    piece.class == Pawn && (end_pos[0] == 0 || end_pos[7])
+  end
+
+  def choose_piece(start_pos)
+    pawn = self[start_pos]
+    white_uni = {
+      'q': " \u2655 ",
+      'r': " \u2656 ",
+      'n': " \u2658 ",
+      'b': " \u2657 ",
+    }
+    black_uni = {
+      'q': " \u265B ",
+      'r': " \u265C ",
+      'n': " \u265E ",
+      'b': " \u265D ",
+    }
+    puts 'Please choose which piece you want.'
+    puts 'Press Q for Queen, R for Rook, N for Knight, B for Bishop.'
+    choice = gets.chomp!.downcase
+    pawn.color == :white ? code = white_uni[choice.to_sym] : code = black_uni[choice.to_sym]
+    if choice === 'q'
+      self[start_pos] = Queen.new(pawn.color,start_pos,self,code)
+    elsif choice === 'r'
+      self[start_pos] = Rook.new(pawn.color,start_pos,self,code)
+    elsif choice === 'n'
+      self[start_pos] = Knight.new(pawn.color,start_pos,self,code)
+    elsif choice === 'b'
+      self[start_pos] = Bishop.new(pawn.color,start_pos,self,code)
+    end
   end
 
   def is_valid_move?(start_pos, end_pos)
@@ -60,13 +116,13 @@ class Board
       sleep(0.7)
       return false
     end
-    if piece.move_into_check?(end_pos)
-      puts "You cannot move into check!"
+    unless piece.moves.include?(end_pos)
+      puts "You cannot move there!"
       sleep(0.7)
       return false
     end
-    unless piece.moves.include?(end_pos)
-      puts "You cannot move there!"
+    if !castling?(start_pos,end_pos) && piece.move_into_check?(end_pos)
+      puts "You cannot move into check!"
       sleep(0.7)
       return false
     end
@@ -85,21 +141,23 @@ class Board
     kings_hash
   end
 
-  def check?
+  def in_check?(color)
     kings_hash = self.find_kings
-    check_hash = {white: false, black: false}
-    @grid.each do |row|
-      row.each do |piece|
-        next if piece.class == NullPiece
-        moves = piece.moves
-        if piece.color == :white
-           check_hash[:black] = true if moves.include?(kings_hash[:black])
-        elsif piece.color == :black
-          check_hash[:white] = true if moves.include?(kings_hash[:white])
-        end
+    @grid.any? do |row|
+      row.any? do |piece|
+        next if piece.class == NullPiece || piece.color == color
+        piece.moves.include?(kings_hash[color])
       end
     end
-    check_hash
+  end
+
+  def under_attack_by?(color,pos)
+    @grid.any? do |row|
+      row.any? do |piece|
+        next if piece.class == NullPiece || piece.class == King || piece.color != color
+        piece.moves.include?(pos)
+      end
+    end
   end
 
   def valid_moves?(color)
@@ -112,8 +170,7 @@ class Board
   end
 
   def checkmate?(color)
-    check_hash = self.check?
-    check_hash[color] && !valid_moves?(color)
+    self.in_check?(color) && !valid_moves?(color)
   end
 
 end

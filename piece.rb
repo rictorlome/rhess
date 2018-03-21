@@ -46,7 +46,6 @@ module Steppable
     end
 
     moves.select do |move|
-      # debugger
       (move[0].between?(0,7) && move[1].between?(0,7)) &&
        (self.color != self.board[move].color || self.board[move].color == nil)
     end
@@ -57,13 +56,14 @@ end
 class Piece
 
   attr_reader :color, :board, :symbol
-  attr_accessor :pos
+  attr_accessor :pos, :has_moved
 
   def initialize(color, pos, board, symbol)
     @color = color
     @pos = pos
     @board = board
     @symbol = symbol
+    @has_moved = false
   end
 
   def replace_piece(end_pos)
@@ -76,7 +76,7 @@ class Piece
     piece = self.board[end_pos]
 
     self.board.move_piece(start_pos,end_pos)
-    check = self.board.check?[self.color]
+    check = self.board.in_check?(self.color)
     self.board.move_piece(end_pos,start_pos)
 
     piece.replace_piece(end_pos)
@@ -103,16 +103,6 @@ end
 
 
 class Pawn < Piece
-
-  def initialize (color, pos, board, symbol)
-    super
-    if self.color == :white
-      @at_start_row = (self.pos[0] == 6)
-    else
-      @at_start_row = (self.pos[0] == 1)
-    end
-  end
-
   def moves
     mvs = []
     x, y = self.pos
@@ -121,7 +111,7 @@ class Pawn < Piece
     mvs << m1 if self.board[m1].color == nil
 
     m2 = [(x + forward_dir + forward_dir), y]
-    mvs << m2 if @at_start_row && self.board[m1].color == nil && self.board[m2].color == nil
+    mvs << m2 if !@has_moved && self.board[m1].color == nil && self.board[m2].color == nil
 
     mvs += self.side_attacks
     mvs
@@ -147,13 +137,7 @@ class Pawn < Piece
 
 end
 
-
-
-
-
 class King < Piece
-  include Steppable
-
   def move_diffs
     res = []
     (-1..1).each do |row|
@@ -163,6 +147,58 @@ class King < Piece
     end
     res
   end
+
+  def kingside_row_clear
+    x, y = self.pos
+    self.color == :white ? other = :black : other = :white
+
+    rook_in_place = self.board[[x,y+3]].class == Rook && !self.board[[x,y+3]].has_moved
+
+    rook_in_place && (1..2).to_a.all? do |i|
+      self.board[[x,y+i]].class == NullPiece &&
+      !self.board.under_attack_by?(other,[x,y+i])
+    end
+  end
+
+  def queenside_row_clear
+    x, y = self.pos
+    self.color == :white ? other = :black : other = :white
+
+    rook_in_place = self.board[[x,y-4]].class == Rook && !self.board[[x,y-4]].has_moved
+
+    rook_in_place && (1..3).to_a.all? do |i|
+      self.board[[x,y-i]].class == NullPiece &&
+      !self.board.under_attack_by?(other,[x,y-i])
+    end
+  end
+
+  def add_castle_to_moves(moves)
+    return moves if self.has_moved
+    self.color == :white ? other = :black : other = :white
+    return moves if self.board.under_attack_by?(other,self.pos)
+
+    x, y = self.pos
+
+    moves.push([x,y+2]) if self.kingside_row_clear
+    moves.push([x,y-2]) if self.queenside_row_clear
+    moves
+  end
+
+
+  def moves
+    moves = []
+    self.move_diffs.each do |diff|
+      x, y = (self.pos[0] + diff[0]), (self.pos[1] + diff[1])
+      moves << [x,y]
+    end
+
+    unblocked = moves.select do |move|
+      (move[0].between?(0,7) && move[1].between?(0,7)) &&
+       (self.color != self.board[move].color || self.board[move].color == nil)
+    end
+    add_castle_to_moves(unblocked)
+  end
+
 end
 
 class Knight < Piece

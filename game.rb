@@ -29,18 +29,17 @@ class Game
   end
 
   def check_status
-    check_hash = board.check?
     print "White in check?:  "
-    if check_hash[:white]
-      puts check_hash[:white].to_s.colorize(:red)
+    if board.in_check?(:white)
+      puts board.in_check?(:white).to_s.colorize(:red)
     else
-      puts check_hash[:white].to_s.colorize(:green)
+      puts board.in_check?(:white).to_s.colorize(:green)
     end
     print "Black in check?:  "
-    if check_hash[:black]
-      puts check_hash[:black].to_s.colorize(:red)
+    if board.in_check?(:black)
+      puts board.in_check?(:black).to_s.colorize(:red)
     else
-      puts check_hash[:black].to_s.colorize(:green)
+      puts board.in_check?(:black).to_s.colorize(:green)
     end
   end
 
