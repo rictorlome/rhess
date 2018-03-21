@@ -1,10 +1,11 @@
 require_relative 'piece'
 
 class Board
-  attr_reader :grid
+  attr_reader :grid, :can_empassant
 
   def initialize
     @grid = Array.new(8) { Array.new(8) {NullPiece.instance} }
+    @can_empassant = false
     self.set_board
   end
 #color, pos, board, symbol
@@ -50,13 +51,19 @@ class Board
   def move_piece(start_pos, end_pos)
     piece = self[start_pos]
     wrap_rook(start_pos,end_pos) if castling?(start_pos,end_pos)
+    set_empassant(start_pos,end_pos)
+    clean_up_empassanted_piece(start_pos,end_pos) if empassanting?(start_pos,end_pos)
     if promoting?(start_pos,end_pos)
       choose_piece(start_pos)
       piece = self[start_pos]
     end
     self[start_pos], self[end_pos] = NullPiece.instance, piece
     piece.pos = end_pos
+  end
 
+  def set_empassant(start_pos,end_pos)
+    two_moves = (end_pos[0] - start_pos[0]).abs != 1
+    @can_empassant = (self[start_pos].class == Pawn && two_moves)
   end
 
   def wrap_rook(start_pos,end_pos)
@@ -78,6 +85,21 @@ class Board
   def promoting?(start_pos,end_pos)
     piece = self[start_pos]
     piece.class == Pawn && (end_pos[0] == 0 || end_pos[7])
+  end
+
+  def empassanting?(start_pos,end_pos)
+    taking = start_pos[1] != end_pos[1]
+    self[start_pos].class == Pawn && taking && self[end_pos].class == NullPiece
+  end
+
+  def clean_up_empassanted_piece(start_pos,end_pos)
+    x, y = end_pos
+    piece = self[start_pos]
+    if piece.color == :white
+      self[[x,y+1]] = NullPiece.instance
+    else
+      self[[x,y-1]] = NullPiece.instance
+    end
   end
 
   def choose_piece(start_pos)
