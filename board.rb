@@ -89,16 +89,17 @@ class Board
 
   def empassanting?(start_pos,end_pos)
     taking = start_pos[1] != end_pos[1]
-    self[start_pos].class == Pawn && taking && self[end_pos].class == NullPiece
+    self[start_pos].class == Pawn && taking &&
+     self[end_pos].class == NullPiece && (end_pos[0] == start_pos[0] + self[start_pos].forward_dir)
   end
 
   def clean_up_empassanted_piece(start_pos,end_pos)
     x, y = end_pos
     piece = self[start_pos]
     if piece.color == :white
-      self[[x,y+1]] = NullPiece.instance
+      self[[x+1,y]] = NullPiece.instance
     else
-      self[[x,y-1]] = NullPiece.instance
+      self[[x-1,y]] = NullPiece.instance
     end
   end
 
