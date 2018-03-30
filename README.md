@@ -10,7 +10,7 @@ This is a Ruby terminal game version of Chess. Right now, it supports castling, 
 
 ## Features
 
-My intent with this implementation of chess was to code simple, highly semantic class interactions. The most complicated method is easily the move_piece method, which must listen
+My intent with this implementation of chess was to code simple, highly semantic class interactions. The most complicated method is easily the move_piece method, which must listen for non-standard moves such as castling, en passant and pawn promotion. I tried to keep this method easy to read using straightforward helper methods.
 
 ``` ruby
 def move_piece(start_pos, end_pos)
@@ -27,12 +27,21 @@ def move_piece(start_pos, end_pos)
 end
 ```
 
-Another big decision came during move validation. Instead of duplicating the board for every possible move, I decided to move the piece, check if the board was in check, and then move the piece back. This came with numerous consequences especially for castling. One of the conditions for castling is that the king does not pass through check. The check method determines whether the pieces' moves include an attack on the king. The runs the castling move on the kings, which lead to an infinite loop. In order to avoid this stack overflow, I limited the check validation to movement of the other color's pieces.
+Another big decision came during move validation. Instead of duplicating the board for every possible move, I decided to move the piece, determine if the board was in check, and then move the piece back. This came with numerous consequences especially for castling. One of the conditions for castling is that the king does not pass through check. The check method determines whether the pieces' moves include an attack on the king. This, in turn, runs the castling move on the kings, which lead to an infinite loop. In order to avoid this stack overflow, I limited the check validation to movement of the other color's pieces.
 
 ## Instructions
 
-In order to run this application, the user must clone the github repository and run game.rb in the terminal.
-The exact command is: 'ruby game.rb'. Then the game should open up, allowing the user to play against a friend or against his or her self.
+In order to run this application, the user must clone the github repository, navigate into the repo folder, and run game.rb in the terminal.
+```bash
+$ git clone https://github.com/rictorlome/rhess.git
+$ cd rhess
+$ ruby game.rb
+```
+ Then the game should open up, allowing the user to play against a friend or against his or her self. I have been informed that the game does not work for all versions of ruby. If your version of ruby does not support ```require_relative```, you will not be able to load game.rb. I do not know what the breakdown is for which versions are compatible, but the game should work for the following version:
+ ```bash
+ $ ruby --version
+ruby 2.3.1p112 (2016-04-26 revision 54768) [x86_64-darwin16]
+```
 
 ## Future
 
