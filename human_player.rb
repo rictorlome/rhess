@@ -33,7 +33,7 @@ class HumanPlayer
     self.handle_cheating
 
       if display.cursor.move_buffer.length == 2
-        start, dest = display.cursor.move_buffer[0], display.cursor.move_buffer[1]
+        start, dest = display.cursor.move_buffer
         if board.is_valid_move?(start,dest)
            board.move_piece(start,dest)
            board[dest].has_moved = true

@@ -157,8 +157,7 @@ class Board
     @grid.each_with_index do |row,idx1|
       row.each_with_index do |piece,idx2|
         pos = [idx1,idx2]
-        kings_hash[:white] = pos if piece.class == King && piece.color ==  :white
-        kings_hash[:black] = pos if piece.class == King && piece.color ==  :black
+        kings_hash[piece.color] = pos if piece.class == King
       end
     end
     kings_hash

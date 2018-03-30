@@ -3,6 +3,8 @@ require 'singleton'
 require 'colorize'
 require_relative 'board'
 
+SIZE = 7
+
 module Slideable
 
   def horizontal_dirs
@@ -25,9 +27,9 @@ module Slideable
   def grow_unblocked_moves_in_dir(dx,dy)
     pos = self.pos
     res = []
-    (1..7).to_a.each do |i|
+    (1..SIZE).to_a.each do |i|
       move =[pos[0] + i * dx, pos[1] + i * dy]
-      break unless (move[0]).between?(0,7) && (move[1]).between?(0,7)
+      break unless (move[0]).between?(0,SIZE) && (move[1]).between?(0,SIZE)
       break if self.color == self.board[move].color
       res << move
       break if (self.color != self.board[move].color) && (self.board[move].color != nil)
@@ -46,7 +48,7 @@ module Steppable
     end
 
     moves.select do |move|
-      (move[0].between?(0,7) && move[1].between?(0,7)) &&
+      (move[0].between?(0,SIZE) && move[1].between?(0,SIZE)) &&
        (self.color != self.board[move].color || self.board[move].color == nil)
     end
   end
@@ -127,10 +129,10 @@ class Pawn < Piece
     x,y = self.pos
     side_attacks = []
     left_attack, right_attack = [(x + forward_dir), y+1], [(x + forward_dir), y-1]
-    if (left_attack[1].between?(0,7) && self.board[left_attack].color != nil && self.board[left_attack].color != self.color)
+    if (left_attack[1].between?(0,SIZE) && self.board[left_attack].color != nil && self.board[left_attack].color != self.color)
       side_attacks << left_attack
     end
-    if (right_attack[1].between?(0,7) && self.board[right_attack].color != nil && self.board[right_attack].color != self.color)
+    if (right_attack[1].between?(0,SIZE) && self.board[right_attack].color != nil && self.board[right_attack].color != self.color)
       side_attacks << right_attack
     end
     side_attacks
@@ -226,7 +228,7 @@ class King < Piece
     end
 
     unblocked = moves.select do |move|
-      (move[0].between?(0,7) && move[1].between?(0,7)) &&
+      (move[0].between?(0,SIZE) && move[1].between?(0,SIZE)) &&
        (self.color != self.board[move].color || self.board[move].color == nil)
     end
     add_castle_to_moves(unblocked)
