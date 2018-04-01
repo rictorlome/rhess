@@ -17,6 +17,8 @@ class Display
         (i + j).even? ? back = :light_white : back = :light_black
         if [i,j] == @cursor.cursor_pos
           print piece.symbol.colorize(:light_red).colorize( :background => :red)
+        elsif [i,j] == @cursor.move_buffer.first
+          print piece.symbol.colorize(:color => piece.color, :background => :yellow)
         else
           print piece.symbol.colorize(:color => piece.color, :background => back)
         end

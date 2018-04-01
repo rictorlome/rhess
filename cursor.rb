@@ -92,6 +92,15 @@ class Cursor
     cX, cY = @cursor_pos
     dX, dY = diff
     nX, nY = cX + dX, cY + dY
+    nX, nY = wrap(nX, nY)
     @cursor_pos = [nX, nY]
+  end
+
+  def wrap(nX,nY)
+    nX = 7 if nX < 0
+    nY = 7 if nY < 0
+    nX = 0 if nX > 7
+    nY = 0 if nY > 7
+    return nX, nY
   end
 end

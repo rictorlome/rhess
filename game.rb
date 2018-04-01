@@ -60,6 +60,7 @@ class Game
 
   def play
     system("clear")
+    render_welcome
     until game_over?
       @player1.make_move
       @player2.make_move
@@ -69,7 +70,56 @@ class Game
     puts "Checkmate!"
     puts winner
   end
+
+  def render_welcome
+
+    puts "Welcome to..."
+    puts".______       __    __   _______     _______.     _______.".colorize(:blue)
+    puts"|   _  \\     |  |  |  | |   ____|   /       |    /       |".colorize(:blue)
+    puts"|  |_)  |    |  |__|  | |  |__     |   (----`   |   (----`".colorize(:blue)
+    puts"|      /     |   __   | |   __|     \\   \\        \\   \\    ".colorize(:blue)
+    puts"|  |\\  \\----.|  |  |  | |  |____.----)   |   .----)   |   ".colorize(:blue)
+    puts"| _| `._____||__|  |__| |_______|_______/    |_______/  ".colorize(:blue)
+    puts ""
+    puts "... #{"ruby".colorize(:red)} chess in the console."
+    puts ""
+    sleep(1.5)
+    puts "Gameplay is simple."
+    sleep(2)
+    puts "Play against yourself or a friend by using the space-bar."
+    sleep(2)
+    puts ""
+    puts "Press #{"SPACE".colorize(:green)} to pick a piece up."
+    sleep (1.5)
+    puts "Use the #{"ARROW KEYS".colorize(:magenta)} to move the cursor around."
+    sleep (1.5)
+    puts "Press #{"SPACE".colorize(:green)} to put the piece down."
+    sleep(3)
+    puts ""
+    puts "If you are using a MAC, press #{("\u2318" + " AND +").colorize(:cyan)} to zoom in/enlarge the board."
+    puts ""
+    sleep(2)
+    puts "Selected pieces are highlighted #{"YELLOW".colorize(:yellow)}."
+    sleep(1)
+    puts "The cursor's position is highlighted #{"RED".colorize(:light_red)}."
+    sleep(2)
+    puts "The game should finish automatically when one of you has won."
+    sleep(3)
+    puts ""
+    puts "Thats it! Enjoy!"
+    sleep(2)
+    puts "Press #{"ENTER".colorize(:light_magenta)} when you're ready to play."
+    input = gets
+    until input == "\n"
+      input = ""
+      input = gets
+    end
+    system('clear')
+  end
+
 end
+
+
 
 if __FILE__ == $PROGRAM_NAME
   g = Game.new
