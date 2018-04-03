@@ -154,6 +154,20 @@ class Board
     true
   end
 
+  def can_move_there?(start_pos,end_pos)
+    piece = self[start_pos]
+    if !self.is_on_board?(start_pos) || piece.class == NullPiece
+      return false
+    end
+    unless piece.moves.include?(end_pos)
+      return false
+    end
+    if !castling?(start_pos,end_pos) && piece.move_into_check?(end_pos)
+      return false
+    end
+    true
+  end
+
   def find_kings
     kings_hash = {white: 0, black: 0}
     @grid.each_with_index do |row,idx1|
