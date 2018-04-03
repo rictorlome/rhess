@@ -31,10 +31,11 @@ Another big decision came during move validation. Instead of duplicating the boa
 
 ## Instructions
 
-In order to run this application, the user must clone the github repository, navigate into the repo folder, and run game.rb in the terminal.
+In order to run this application, the user must clone the github repository, navigate into the repo folder, install the colorize gem, and run game.rb in the terminal.
 ```bash
 $ git clone https://github.com/rictorlome/rhess.git
 $ cd rhess
+$ gem install colorize
 $ ruby game.rb
 ```
  Then the game should open up, allowing the user to play against a friend or against his or her self. I have been informed that the game does not work for all versions of ruby. If your version of ruby does not support ```require_relative```, you will not be able to load game.rb. I do not know what the breakdown is for which versions are compatible, but the game should work for the following version:

@@ -1,9 +1,7 @@
 require_relative 'board'
-require_relative 'piece'
 require_relative 'cursor'
 require_relative 'display'
 require_relative 'human_player'
-require 'byebug'
 
 
 class Game

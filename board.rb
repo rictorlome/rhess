@@ -1,4 +1,6 @@
-require_relative 'piece'
+require_relative 'piece/king'
+require_relative 'piece/pawn'
+require_relative 'piece/other_pieces'
 
 class Board
   attr_reader :grid, :can_empassant
