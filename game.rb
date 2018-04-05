@@ -81,31 +81,31 @@ class Game
     puts ""
     puts "... #{"ruby".colorize(:red)} chess in the console."
     puts ""
-    sleep(1.5)
+    sleep(1)
     puts "Gameplay is simple."
-    sleep(2)
+    sleep(1)
     puts "Play against yourself or a friend by using the space-bar."
-    sleep(2)
+    sleep(1.5)
     puts ""
     puts "Press #{"SPACE".colorize(:green)} to pick a piece up."
-    sleep (1.5)
+    sleep (1.25)
     puts "Use the #{"ARROW KEYS".colorize(:magenta)} to move the cursor around."
-    sleep (1.5)
+    sleep (1.25)
     puts "Press #{"SPACE".colorize(:green)} to put the piece down."
-    sleep(3)
+    sleep(2)
     puts ""
     puts "If you are using a MAC, press #{("\u2318" + " AND +").colorize(:cyan)} to zoom in/enlarge the board."
     puts ""
-    sleep(2)
+    sleep(1.5)
     puts "Selected pieces are highlighted #{"YELLOW".colorize(:yellow)}."
     sleep(1)
     puts "The cursor's position is highlighted #{"RED".colorize(:light_red)}."
-    sleep(2)
+    sleep(1.5)
     puts "The game should finish automatically when one of you has won."
-    sleep(3)
+    sleep(1)
     puts ""
     puts "Thats it! Enjoy!"
-    sleep(2)
+    sleep(1)
     puts "Press #{"ENTER".colorize(:light_magenta)} when you're ready to play."
     input = gets
     until input == "\n"
