@@ -19,8 +19,6 @@ class Display
           print piece.symbol.colorize(:light_red).colorize( :background => :red)
         elsif [i,j] == @cursor.move_buffer.first
           print piece.symbol.colorize(:color => piece.color, :background => :yellow)
-        elsif @cursor.move_buffer.first && @board.can_move_there?(@cursor.move_buffer.first, [i,j])
-          print piece.symbol.colorize(:color => piece.color, :background => :light_blue)
         else
           print piece.symbol.colorize(:color => piece.color, :background => back)
         end
