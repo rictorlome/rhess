@@ -2,6 +2,35 @@ require_relative 'piece/king'
 require_relative 'piece/pawn'
 require_relative 'piece/other_pieces'
 
+PIECE_MAP = {
+  # icons
+  "\u2654" => [King, :white, "\u2654"],
+  "\u2655" => [Queen, :white, "\u2655"],
+  "\u2656" => [Rook, :white, "\u2656"],
+  "\u2657" => [Bishop, :white, "\u2657"],
+  "\u2658" => [Knight, :white, "\u2658"],
+  "\u2659" => [Pawn, :white, "\u2659"],
+  "\u265A" => [King, :black, "\u265A"],
+  "\u265B" => [Queen, :black, "\u265B"],
+  "\u265C" => [Rook, :black, "\u265C"],
+  "\u265D" => [Bishop, :black, "\u265D"],
+  "\u265E" => [Knight, :black, "\u265E"],
+  "\u265F" => [Pawn, :black, "\u265F"],
+  # ascii
+  "K" => [King, :white, "\u2654"],
+  "Q" => [Queen, :white, "\u2655"],
+  "R" => [Rook, :white, "\u2656"],
+  "B" => [Bishop, :white, "\u2657"],
+  "N" => [Knight, :white, "\u2658"],
+  "P" => [Pawn, :white, "\u2659"],
+  "k" => [King, :black, "\u265A"],
+  "q" => [Queen, :black, "\u265B"],
+  "r" => [Rook, :black, "\u265C"],
+  "b" => [Bishop, :black, "\u265D"],
+  "n" => [Knight, :black, "\u265E"],
+  "p" => [Pawn, :black, "\u265F"],
+}
+
 class Board
   attr_reader :grid, :can_empassant
 
@@ -10,29 +39,33 @@ class Board
     @can_empassant = false
     self.set_board
   end
+
 #color, pos, board, symbol
   def set_board
-    self[[0,0]] = Rook.new(:black,[0,0],self," \u265C ")
-    self[[0,7]] = Rook.new(:black,[0,7],self," \u265C ")
-    self[[0,1]] = Knight.new(:black,[0,1],self," \u265E ")
-    self[[0,6]] = Knight.new(:black,[0,6],self," \u265E ")
-    self[[0,2]] = Bishop.new(:black,[0,2],self," \u265D ")
-    self[[0,5]] = Bishop.new(:black,[0,5],self," \u265D ")
-    self[[0,4]] = King.new(:black,[0,4],self," \u265A ")
-    self[[0,3]] = Queen.new(:black,[0,3],self," \u265B ")
-    8.times do |i|
-      self[[1,i]] = Pawn.new(:black,[1,i],self," \u265F ")
-    end
-    self[[7,0]] = Rook.new(:white,[7,0],self," \u2656 ")
-    self[[7,7]] = Rook.new(:white,[7,7],self," \u2656 ")
-    self[[7,1]] = Knight.new(:white,[7,1],self," \u2658 ")
-    self[[7,6]] = Knight.new(:white,[7,6],self," \u2658 ")
-    self[[7,2]] = Bishop.new(:white,[7,2],self," \u2657 ")
-    self[[7,5]] = Bishop.new(:white,[7,5],self," \u2657 ")
-    self[[7,4]] = King.new(:white,[7,4],self," \u2654 ")
-    self[[7,3]] = Queen.new(:white,[7,3],self," \u2655 ")
-    8.times do |i|
-      self[[6,i]] = Pawn.new(:white,[6,i],self," \u2659 ")
+    board_string = %{
+      rnbqkbnr
+      pppppppp
+      ________
+      ________
+      ________
+      ________
+      PPPPPPPP
+      RNBQKBNR
+    }
+
+    grid = board_string.strip().split("\n").map{|row| row.strip().split('')}
+    raise 'Invalid board' unless grid.size() == 8 and grid.all?{|row| row.size() == 8}
+
+    for row,x in grid.each_with_index
+      for item,y in row.each_with_index
+        pos = [x,y]
+        (piece, color, symbol) = PIECE_MAP[item]
+        self[pos] = piece.new(
+          color=color,
+          pos=pos,
+          board=self,
+          symbol=" #{symbol} ") unless !piece
+      end
     end
   end
 
