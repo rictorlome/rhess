@@ -37,22 +37,9 @@ class Board
   def initialize
     @grid = Array.new(8) { Array.new(8) {NullPiece.instance} }
     @can_empassant = false
-    self.set_board
   end
 
-#color, pos, board, symbol
-  def set_board
-    board_string = %{
-      rnbqkbnr
-      pppppppp
-      ________
-      ________
-      ________
-      ________
-      PPPPPPPP
-      RNBQKBNR
-    }
-
+  def set_board(board_string)
     grid = board_string.strip().split("\n").map{|row| row.strip().split('')}
     raise 'Invalid board' unless grid.size() == 8 and grid.all?{|row| row.size() == 8}
 
