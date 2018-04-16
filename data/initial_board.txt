@@ -1,0 +1,9 @@
+rnbqkbnr
+pppppppp
+________
+________
+________
+________
+PPPPPPPP
+RNBQKBNR
+white to move

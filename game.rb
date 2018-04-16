@@ -1,4 +1,5 @@
 require_relative 'board'
+require_relative 'command_line_options'
 require_relative 'cursor'
 require_relative 'display'
 require_relative 'human_player'
@@ -9,12 +10,16 @@ class Game
   attr_accessor :turn
 
   def initialize
-    @board = Board.new
-    board.set_board
+    @options = CommandLineOptions.parse()
+    @board = Board.new()
+
+    board_lines = File.readlines(@options[:board]).reject { |line| line.strip.empty? }
+    @board.set_board(board_lines.slice(0,8).join())
+    @turn = (board_lines[-1].downcase.include?('black')) ? :black : :white
+
     @display = Display.new(@board)
     @player1 = HumanPlayer.new('Sam', self, :white)
     @player2 = HumanPlayer.new('Bob', self, :black)
-    @turn = :white
   end
 
   def render
@@ -70,7 +75,6 @@ class Game
   end
 
   def render_welcome
-
     puts "Welcome to..."
     puts".______       __    __   _______     _______.     _______.".colorize(:blue)
     puts"|   _  \\     |  |  |  | |   ____|   /       |    /       |".colorize(:blue)
@@ -81,31 +85,31 @@ class Game
     puts ""
     puts "... #{"ruby".colorize(:red)} chess in the console."
     puts ""
-    sleep(1)
+    pause(1)
     puts "Gameplay is simple."
-    sleep(1)
+    pause(1)
     puts "Play against yourself or a friend by using the space-bar."
-    sleep(1.5)
+    pause(1.5)
     puts ""
     puts "Press #{"SPACE".colorize(:green)} to pick a piece up."
-    sleep (1.25)
+    pause(1.25)
     puts "Use the #{"ARROW KEYS".colorize(:magenta)} to move the cursor around."
-    sleep (1.25)
+    pause(1.25)
     puts "Press #{"SPACE".colorize(:green)} to put the piece down."
-    sleep(2)
+    pause(2)
     puts ""
     puts "If you are using a MAC, press #{("\u2318" + " AND +").colorize(:cyan)} to zoom in/enlarge the board."
     puts ""
-    sleep(1.5)
+    pause(1.5)
     puts "Selected pieces are highlighted #{"YELLOW".colorize(:yellow)}."
-    sleep(1)
+    pause(1)
     puts "The cursor's position is highlighted #{"RED".colorize(:light_red)}."
-    sleep(1.5)
+    pause(1.5)
     puts "The game should finish automatically when one of you has won."
-    sleep(1)
+    pause(1)
     puts ""
     puts "Thats it! Enjoy!"
-    sleep(1)
+    pause(1)
     puts "Press #{"ENTER".colorize(:light_magenta)} when you're ready to play."
     input = gets
     until input == "\n"
@@ -113,6 +117,11 @@ class Game
       input = gets
     end
     system('clear')
+  end
+
+  def pause(amount)
+    rate = @options[:fast] ? 0 : 1
+    sleep(rate * amount)
   end
 
 end
