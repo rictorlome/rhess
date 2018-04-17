@@ -44,6 +44,23 @@ $ ruby game.rb
 ruby 2.3.1p112 (2016-04-26 revision 54768) [x86_64-darwin16]
 ```
 
+In addition, thanks to contributions by [@davegolland](https://github.com/davegolland), there are now additional options with which you can load the game. Running game.rb with the ```--help``` flag will print out the different options, which include fast-forwarding through the instructions and specifying an initial board state.
+```bash
+$ ruby game.rb -h
+Usage: game [options]
+    -b, --board PATH                 Specify the initial board file. (default: data/initial_board.txt)
+    -f, --fast                       Dont sleep between instructions.
+    -h, --help                       Prints this help
+```
+
 ## Future
 
-The main immediate goal for this app is to get a live version working on the browser in order to enable easier play. My current strategy for this is to combine the chessboard.js library with the opalrb transpiler to JS. The former will enable easy user interaction without duplicating the move validation, the latter will allow me to preserve my existing game logic without a total refactoring into JavaScript.
+The immediate goals for this application can be divided into two main categories:
+### 1. To enable easier play and demonstration.
+- To this end, getting a version working in the browser is the logical step. The current plan is to use the chessboard.js library for the presentational components, while retaining the existing gameplay logic on a ruby backend.
+
+### 2. To build out chess functionality.
+
+- To improve the board parsing functionality, possibly with different formats.
+- To implement a chess-puzzle solving AI.
+- To eventually implement a full gameplay AI.
