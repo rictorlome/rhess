@@ -26,4 +26,19 @@ class Display
       print "\n"
     end
   end
+
+  def render_to_string
+    s = ''
+    @board.grid.each_with_index do |row, i|
+      row.each_with_index do |piece, j|
+        if piece.instance_of? NullPiece
+          s += ' _ '
+        else
+          s += piece.symbol
+        end
+      end
+      s += "\n"
+    end
+    return s
+  end
 end

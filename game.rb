@@ -74,6 +74,15 @@ class Game
     puts winner
   end
 
+  def save(path)
+    puts("Saving game to #{path}")
+    sleep(2)
+    File.open(path, 'w') { |file|
+      file.write(@display.render_to_string())
+      file.write("#{self.turn} to move.")
+    }
+  end
+
   def render_welcome
     puts "Welcome to..."
     puts".______       __    __   _______     _______.     _______.".colorize(:blue)

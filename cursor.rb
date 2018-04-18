@@ -21,6 +21,7 @@ KEYMAP = {
   "\177" => :backspace,
   "\004" => :delete,
   "\u0003" => :ctrl_c,
+  "S" => :save
 }
 
 MOVES = {
@@ -33,12 +34,13 @@ MOVES = {
 class Cursor
 
   attr_reader :board
-  attr_accessor :cursor_pos, :move_buffer
+  attr_accessor :cursor_pos, :move_buffer, :output_filename
 
   def initialize(cursor_pos, board)
     @cursor_pos = cursor_pos
     @board = board
     @move_buffer = []
+    @output_filename = nil
   end
 
   def get_input
@@ -78,14 +80,33 @@ class Cursor
   end
 
   def handle_key(key)
-    if [:left, :right, :up, :down].include?(key)
+    case key
+    when :left, :right, :up, :down
       diff = MOVES[key]
       update_pos(diff)
-    elsif key == :space
+    when :space
       move_buffer << @cursor_pos
-    elsif key == :ctrl_c
+    when :ctrl_c
       exit
+    when :save
+      save
     end
+  end
+
+  def save
+    filename = nil
+    puts "\n\nEnter FILENAME to save the game. Game will be saved in ./data/<FILENAME>.txt (leave blank to cancel)"
+    while !filename
+      line = gets.chomp
+      break if line.empty?
+      path = "./data/#{line}.txt"
+      if File.exist?(path)
+        puts "File '#{path}' already exists. Enter a new name (leave blank to cancel)"
+      else
+        filename = path
+      end
+    end
+    @output_filename = filename
   end
 
   def update_pos(diff)
