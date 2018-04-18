@@ -95,11 +95,11 @@ class Cursor
 
   def save
     filename = nil
-    puts "\n\nEnter a location where to save the game (leave blank to cancel)"
+    puts "\n\nEnter FILENAME to save the game. Game will be saved in ./data/<FILENAME>.txt (leave blank to cancel)"
     while !filename
       line = gets.chomp
       break if line.empty?
-      path = "./data/#{line}"
+      path = "./data/#{line}.txt"
       if File.exist?(path)
         puts "File '#{path}' already exists. Enter a new name (leave blank to cancel)"
       else
