@@ -40,7 +40,7 @@ class Board
   end
 
   def set_board(board_string)
-    grid = board_string.strip().split("\n").map{|row| row.strip().split('')}
+    grid = board_string.gsub(' ', '').strip().split("\n").map{|row| row.strip().split('')}
     raise 'Invalid board' unless grid.size() == 8 and grid.all?{|row| row.size() == 8}
 
     for row,x in grid.each_with_index

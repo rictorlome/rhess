@@ -24,12 +24,19 @@ class HumanPlayer
     end
   end
 
+  def handle_saving
+    return if not display.cursor.output_filename
+    game.save(display.cursor.output_filename)
+    display.cursor.output_filename = nil
+  end
+
   def make_move
     while game.turn == self.color && !game.game_over?
 
     game.render
     display.cursor.get_input
     self.handle_cheating
+    self.handle_saving
 
       if display.cursor.move_buffer.length == 2
         start, dest = display.cursor.move_buffer
